@@ -137,31 +137,25 @@ quiz_agent = Agent(
         Your output must be a valid JSON array. Each item in the array represents a quiz question and must contain the following keys:
 
         - "question": The text of the question.
-        - "type": Either "multiple-choice" or "open".
-        - "options": A list of exactly 4 answer options (ONLY if the question is of type "multiple-choice").
-        - "answer": The correct answer. For multiple-choice, it must match exactly one of the options (ONLY if the question is of type "multiple-choice"). 
+        - "options": A list of exactly 5 answer options 
+        - "answer": The correct answer.
         - "source": The exact sentence or short paragraph from the input text that was used to generate the question.
 
         Formatting rules (MANDATORY):
         - The JSON output MUST be syntactically valid.
         - The "options" and "answer" field MUST be omitted for open questions.
-        - You MUST generate at least 5 questions, with at least 2 of type "open".
+        - You MUST generate 5 questions, with only response valid.
+        
+        
 
         Example of the REQUIRED JSON structure:
         ```json
         [
           {
             "question": "What is the main advantage of supervised learning?",
-            "type": "multiple-choice",
             "options": ["It does not need labeled data", "It uses reinforcement signals", "It relies on labeled data to train", "It generates images from noise"],
             "answer": "It relies on labeled data to train",
             "source": "Supervised learning is a type of machine learning that relies on labeled data to train a model."
-          },
-          {
-            "question": "Explain how a convolutional neural network processes image data.",
-            "type": "open",
-            "answer": "A convolutional neural network uses layers of filters to extract spatial features from image data and processes them through a series of operations like pooling and activation functions.",
-            "source": "CNNs are neural networks that use convolutional layers to extract features from images, followed by pooling and non-linear transformations."
           }
         ]
         ```
@@ -255,7 +249,10 @@ async def quiz_generator(text):
                            session_id=SESSION_ID)
     return result
 
-
+async def api_quiz_generator(text):
+    result = await  quiz_generator(text)
+    p = result.removesuffix("\n```")
+    return p
 
 
 
@@ -268,7 +265,7 @@ async def reference_generator(text):
     return result
 
 async def api_reference_generator(text):
-    result = await  topics_generator(text)
+    result = await  reference_generator(text)
     p = result.removesuffix("\n```")
     return p
 

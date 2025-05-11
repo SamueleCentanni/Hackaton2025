@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import {Col, Container, Row, Navbar, Button, Nav, FormGroup, ListGroup} from 'react-bootstrap';
+import {Col, Container, Row, Navbar, Button, Nav, FormGroup, ListGroup, Modal} from 'react-bootstrap';
 import {Routes, Route, Outlet, Link, useNavigate, Form} from 'react-router';
 import './App.css';
 import {MyUploadingFormFile, MyUploadingFormFolder} from "./components/AddingForm.jsx";
@@ -8,6 +8,7 @@ import {MapDetails, MapGame} from "./components/maps.jsx";
 import {useEffect, useState} from "react";
 import {MyLogin} from "./components/login.jsx";
 import {ProfileMenu} from "./components/Profile.jsx";
+import {MyRegister, MyRegisterPOV} from "./components/register.jsx";
 
 
 function App() {
@@ -18,6 +19,8 @@ function App() {
     return (
         <Routes>
             <Route path='/login' element={<MyLogin/>}/>
+            <Route path='/register' element={<MyRegister/>}/>
+            <Route path='/register/psychologicalPOV' element={<MyRegisterPOV/>}/>
             <Route path='/' element={<Layout
                 setSelectedGraph={setSelectedGraph}
             />}>
@@ -32,7 +35,6 @@ function App() {
                 />}/>
 
                 <Route path='maps/:mapId/game' element={<MapGame/>}/>
-
             </Route>
 
 
@@ -150,6 +152,59 @@ function MyAside(props) {
 }
 
 
+function FloatingAvatar() {
+    const [showReminder, setShowReminder] = useState(false);
+
+    // Toggle the reminder modal visibility
+    const handleShowReminder = () => {
+        setShowReminder(true);
+    };
+
+    const handleCloseReminder = () => {
+        setShowReminder(false);
+    };
+
+    return (
+        <>
+            {/* Avatar Image */}
+            <img
+                src="/avatar.png"
+                alt="avatar"
+                style={{
+                    position: 'fixed',
+                    bottom: '20px',
+                    right: '20px',
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
+                    zIndex: 1000,
+                    cursor: 'pointer',
+                    animation: 'float 3s ease-in-out infinite',
+                }}
+                onMouseMove={handleShowReminder} // Show reminder on avatar click
+            />
+
+            {/* Reminder Pop-Up (Modal) */}
+            <Modal show={showReminder} onHide={handleCloseReminder}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Reminder</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>This is your reminder! Don't forget to complete the task.</p>
+                    <p>Stay on track with your goals!</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseReminder}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
+    );
+}
+
+
 function Layout(props) {
 
     return (
@@ -165,6 +220,9 @@ function Layout(props) {
 
 
             <Outlet/>
+
+
+            <FloatingAvatar/>
 
             <Row>
                 <Col>

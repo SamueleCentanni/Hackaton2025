@@ -202,3 +202,20 @@ async def run_conversation():
 if __name__ == "__main__":
     asyncio.run(run_conversation())
 
+
+
+
+
+async def call_agent_async(text):
+    result = await call_agent_async("Secondo te sto andando bene?",
+                     runner=runner_coach,
+                     user_id=USER_ID,
+                     session_id=SESSION_ID)
+    return result
+
+
+async def api_call_agent_async(text):
+    result = await  call_agent_async(text)
+    p = result.removesuffix("\n```")
+    return p
+

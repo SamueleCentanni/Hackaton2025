@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import {Button, Card, Col, Container, Row} from "react-bootstrap";
-import {useNavigate} from "react-router";
+import {useNavigate, useParams} from "react-router";
+import classNames from 'classnames'
 
 function MapDetails(props) {
 
@@ -94,9 +95,97 @@ function MapDetails(props) {
 }
 
 
-function MapGame(props) {
-    
+function MapGame() {
+    const navigate = useNavigate();
+    const { mapId } = useParams();
+    const [questions, setQuestions] = useState([]);
+    const [selectedAnswers, setSelectedAnswers] = useState({});
+    const [visibleCount, setVisibleCount] = useState(5);
 
+    useEffect(() => {
+        const fetchQuestions = async () => {
+            try {
+                const response = await fetch(`http://192.168.1.3:8000/maps/${mapId}/qea/`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+
+                if (Array.isArray(data)) {
+                    setQuestions(data);
+                } else {
+                    console.error('Invalid question format:', data);
+                }
+            } catch (error) {
+                console.error('Error fetching question data:', error);
+            }
+        };
+
+        if (mapId) {
+            fetchQuestions();
+        }
+    }, [mapId]);
+
+    const handleAnswerClick = (questionIndex, selectedOption) => {
+        setSelectedAnswers(prev => ({
+            ...prev,
+            [questionIndex]: selectedOption
+        }));
+    };
+
+    const answeredCount = Object.keys(selectedAnswers).length;
+    const canLoadMore = answeredCount >= visibleCount;
+
+    return (
+        <div className="container mt-5">
+            {questions.slice(0, visibleCount).map((q, idx) => {
+                const isAnswered = selectedAnswers.hasOwnProperty(idx);
+
+                return (
+                    <div key={idx} className="mb-4 p-3 border rounded shadow-sm bg-light">
+                        <h5>{q.question}</h5>
+                        <ul className="list-group mt-2">
+                            {q.options.map((option, oIdx) => {
+                                const isSelected = selectedAnswers[idx] === option;
+                                const isCorrect = option === q.answer;
+                                return (
+                                    <li
+                                        key={oIdx}
+                                        className={classNames("list-group-item", {
+                                            "text-white bg-success": isSelected && isCorrect,
+                                            "text-white bg-danger": isSelected && !isCorrect,
+                                        })}
+                                        onClick={() => {
+                                            if (!isAnswered) {
+                                                handleAnswerClick(idx, option);
+                                            }
+                                        }}
+                                        style={{ cursor: isAnswered ? 'default' : 'pointer' }}
+                                    >
+                                        {option}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                        {isAnswered && q.source && (
+                            <div className="mt-3 text-muted">
+                                <small><strong>Source:</strong> {q.source}</small>
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
+
+            {canLoadMore && (
+                <div className="text-center mt-4">
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => navigate(`/`)}
+                    >
+                        Back to Home
+                    </button>
+                </div>
+            )}
+        </div>
+    );
 }
 
 export {MapDetails, MapGame};
