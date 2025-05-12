@@ -12,7 +12,7 @@ from google.adk.tools import google_search
 import json
 
 # Assicurati di inserire la tua chiave API di Google qui
-os.environ["GOOGLE_API_KEY"] = "AIzaSyBS2fPKnQ7XZmz9MIVkRH-nBAgoed0znR8"  # <--- Inserisci la tua chiave API qui
+os.environ["GOOGLE_API_KEY"] = "MyAPIKey"  # <--- Inserisci la tua chiave API qui
 
 # Assicurati che Google GenAI non stia cercando di usare Vertex AI
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "False"

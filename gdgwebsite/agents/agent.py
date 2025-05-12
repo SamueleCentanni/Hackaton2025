@@ -18,7 +18,7 @@ AGENT_MODEL = "gemini-2.0-flash" # Starting with Gemini
 import os
 
 # Assicurati di inserire la tua chiave API di Google qui
-os.environ["GOOGLE_API_KEY"] = "AIzaSyBS2fPKnQ7XZmz9MIVkRH-nBAgoed0znR8"
+os.environ["GOOGLE_API_KEY"] = "MyAPIKey"
 
 # Assicurati che Google GenAI non stia cercando di usare Vertex AI
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "False"
